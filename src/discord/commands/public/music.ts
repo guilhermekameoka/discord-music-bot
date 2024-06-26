@@ -1,5 +1,5 @@
 import { Command } from "#base";
-import {icon, res} from "#functions";
+import {icon} from "#functions";
 import { ApplicationCommandType} from "discord.js";
 
 new Command({
@@ -8,6 +8,6 @@ new Command({
     dmPermission: false,
     type: ApplicationCommandType.ChatInput,
     async run(interaction) {
-        interaction.reply(res.success(`${icon("pog")} Tudo certo`).toString());
+        interaction.reply((`${icon("pog")} Tudo certo`));
     },
 })
