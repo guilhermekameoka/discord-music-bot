@@ -1,0 +1,59 @@
+{
+  "name": "bot-musica",
+  "type": "module",
+  "main": "build/index.js",
+  "scripts": {
+    "build:dev": "tsc --noEmit && echo ✔ Ok",
+    "build": "tsc",
+    "dev": "tsx --env-file .env ./src/index.ts",
+    "dev:dev": "tsx --env-file .env.development ./src/index.ts",
+    "watch": "tsx --watch --env-file .env ./src/index.ts",
+    "watch:dev": "tsx --watch --env-file .env.development ./src/index.ts",
+    "start": "node --env-file .env ./build/index.js",
+    "start:dev": "node --env-file .env.development ./build/index.js"
+  },
+  "dependencies": {
+    "@discord-player/extractor": "^4.4.7",
+    "@discordjs/opus": "^0.9.0",
+    "@magicyan/discord": "^1.0.33",
+    "chalk": "^5.3.0",
+    "consola": "^3.2.3",
+    "discord-player": "^6.6.2",
+    "discord.js": "^14.15.3",
+    "fast-glob": "^3.3.2",
+    "ytdl-core": "^4.11.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "ffmpeg-static": "^5.2.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
+  },
+  "imports": {
+    "#database": [
+      "./build/database/index.js"
+    ],
+    "#base": [
+      "./build/discord/base/index.js"
+    ],
+    "#functions": [
+      "./build/functions/index.js"
+    ],
+    "#menus": [
+      "./build/menus/index.js"
+    ],
+    "#settings": [
+      "./build/settings/index.js"
+    ],
+    "#tools": [
+      "./build/tools/index.js"
+    ],
+    "#lang/*": [
+      "./lang/*"
+    ]
+  }
+}
