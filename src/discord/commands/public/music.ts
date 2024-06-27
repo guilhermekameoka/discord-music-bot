@@ -158,7 +158,7 @@ new Command({
           return;
         }
         queue.node.resume();
-        interaction.editReply(res.success("▶️Retomado"));
+        interaction.editReply(res.success("▶️ Retomado"));
         return;
       }
       case "parar": {
