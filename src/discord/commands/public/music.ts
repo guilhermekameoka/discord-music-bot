@@ -164,7 +164,7 @@ new Command({
             }
           );
 
-          const display = [];
+          const display: string[] = [];
 
           if (searchResult.playlist) {
             const { tracks, title, url } = searchResult.playlist;
