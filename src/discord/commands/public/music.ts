@@ -1,6 +1,8 @@
 import { Command } from "#base";
+import {settings} from "#settings";
 import { createQueueMetadata, icon, res } from "#functions";
-import { brBuilder, limitText } from "@magicyan/discord";
+import { brBuilder, createEmbed, limitText } from "@magicyan/discord";
+import { multimenu } from "@magicyan/discord-ui";
 import { QueryType, SearchQueryType, useMainPlayer } from "discord-player";
 import {
   ApplicationCommandType,
@@ -61,6 +63,11 @@ new Command({
           minValue: 1,
         },
       ],
+    },
+    {
+      name: "fila",
+      description: "Mostra a fila de reprodução",
+      type: ApplicationCommandOptionType.Subcommand,
     },
     // {
     //   name: "pesquisar",
@@ -183,7 +190,7 @@ new Command({
         }
         return;
       }
-/*       case "pesquisar": {
+      /* case "pesquisar": {
         const trackUrl = options.getString("busca", true);
         const searchEngine = options.getString(
           "engine",
@@ -255,6 +262,31 @@ new Command({
           queue.node.skip();
         }
         interaction.editReply(res.success(`⏭️ Puladas ${skipAmount} músicas`));
+        return;
+      }
+      case "fila": {
+        multimenu({
+          embed: createEmbed({
+            color: settings.colors.fuchsia,
+            description: brBuilder(
+              "#Fila atual",
+              `Músicas: ${queue.tracks.size}`,
+              "",
+              `Música atual: ${queue.currentTrack?.title ?? "Nenhuma"}`
+            ),
+          }),
+          items: queue.tracks.map((track) => ({
+            color: settings.colors.green,
+            description: brBuilder(
+              `**Música**: [${track.title}](${track.url})`,
+              `**Autor**: ${track.author}`,
+              `**Duração**: ${track.duration}`
+            ),
+            thumbnail: track.thumbnail,
+          })),
+          render: (embeds, components) =>
+            interaction.editReply({ embeds, components }),
+        });
         return;
       }
     }
