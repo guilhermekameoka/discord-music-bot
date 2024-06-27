@@ -1,6 +1,6 @@
 import { Command } from "#base";
 import { createQueueMetadata, icon, res } from "#functions";
-import { brBuilder } from "@magicyan/discord";
+import { brBuilder, limitText } from "@magicyan/discord";
 import { QueryType, SearchQueryType, useMainPlayer } from "discord-player";
 import {
   ApplicationCommandType,
@@ -61,6 +61,57 @@ new Command({
           minValue: 1,
         },
       ],
+    },
+    {
+      name: "pesquisar",
+      description: "Pesquisar uma música",
+      type: ApplicationCommandOptionType.Subcommand,
+      options: [
+        {
+          name: "engine",
+          description: "engine de busca",
+          type: ApplicationCommandOptionType.String,
+          choices: Object.values(QueryType).map((type) => ({
+            name: type,
+            value: type,
+          })),
+          required: true,
+        },
+        {
+          name: "busca",
+          description: "nome da música ou URL",
+          type: ApplicationCommandOptionType.String,
+          required: true,
+          autocomplete: true,
+        },
+      ],
+      async autocomplete(interaction) {
+        const { options, /* guild */ } = interaction;
+        const player = useMainPlayer();
+        // const queue = player?.queues.cache.get(guild.id);
+
+        switch (options.getSubcommand(true)) {
+          case "pesquisar": {
+            const searchEngine = options.getString("engine", true);
+            const focused = options.getFocused?.();
+
+            try {
+              const results = await player.search(focused, {
+                searchEngine: searchEngine as SearchQueryType,
+              });
+              if (!results.hasTracks()) return;
+              interaction.respond(
+                results.tracks.map((track) => ({
+                  name: limitText(`${track.duration} - ${track.title}`, 100),
+                  value: track.url,
+                }))
+              );
+            } catch (_) {
+              // Handle error
+            }
+          }
+        }
+      },
     },
   ],
   async run(interaction) {
@@ -132,13 +183,43 @@ new Command({
         }
         return;
       }
+      case "pesquisar": {
+        const trackUrl = options.getString("busca", true);
+        const searchEngine = options.getString(
+          "engine",
+          true
+        ) as SearchQueryType;
+
+        try {
+          const { track } = await player?.play(
+            voiceChannel as never,
+            trackUrl,
+            {
+              searchEngine,
+              nodeOptions: { metadata },
+            }
+          );
+
+          const text = queue?.size ? "Adicionado à fila" : "Tocando agora";
+          interaction.editReply(
+            res.success(`${icon(":a:dj")} ${text} ${track?.toString()}`)
+          );
+        } catch (_) {
+          interaction.editReply(
+            res.danger("⚠️ Não foi possível tocar a música!")
+          );
+        }
+        return;
+      }
     }
+
     if (!queue) {
       interaction.editReply(
         res.danger("⚠️ Não há uma fila de reprodução ativa!")
       );
       return;
     }
+
     switch (options.getSubcommand(true)) {
       case "pausar": {
         if (queue.node.isPaused()) {
