@@ -58,6 +58,7 @@ new Command({
           name: "quantidade",
           description: "Quantidade de músicas para parar",
           type: ApplicationCommandOptionType.Integer,
+          minValue: 1,
         },
       ],
     },
@@ -164,6 +165,15 @@ new Command({
       case "parar": {
         queue.node.stop();
         interaction.editReply(res.success("⏹️ Parado"));
+        return;
+      }
+      case "pular": {
+        const amount = options.getInteger("quantidade") ?? 1;
+        const skipAmount = Math.min(queue.size, amount);
+        for (let i = 0; i < skipAmount; i++) {
+          queue.node.skip();
+        }
+        interaction.editReply(res.success(`⏭️ Puladas ${skipAmount} músicas`));
         return;
       }
     }
