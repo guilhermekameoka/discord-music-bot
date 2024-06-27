@@ -34,6 +34,33 @@ new Command({
         },
       ],
     },
+    {
+      name: "pausar",
+      description: "Pausa a música atual",
+      type: ApplicationCommandOptionType.Subcommand,
+    },
+    {
+      name: "retomar",
+      description: "Retoma a música atual",
+      type: ApplicationCommandOptionType.Subcommand,
+    },
+    {
+      name: "parar",
+      description: "Para a música atual",
+      type: ApplicationCommandOptionType.Subcommand,
+    },
+    {
+      name: "pular",
+      description: "Pular músicas da fila",
+      type: ApplicationCommandOptionType.Subcommand,
+      options: [
+        {
+          name: "quantidade",
+          description: "Quantidade de músicas para parar",
+          type: ApplicationCommandOptionType.Integer,
+        },
+      ],
+    },
   ],
   async run(interaction) {
     const { options, member, guild, channel, client } = interaction;
@@ -78,7 +105,7 @@ new Command({
             }
           );
 
-          const display: string[] = [] as string[];
+          const display = [];
 
           if (searchResult.playlist) {
             const { tracks, title, url } = searchResult.playlist;
@@ -86,7 +113,7 @@ new Command({
               `🎵 Adicionadas ${tracks.length} da playlist [${title}](${url})`
             );
             display.push(
-              ...tracks.map((track: any) => `${track.title}`).slice(0, 8)
+              ...tracks.map((track) => `${track.title}`).slice(0, 8)
             );
             display.push("...");
           } else {
@@ -102,6 +129,41 @@ new Command({
             res.danger("⚠️ Não foi possível tocar a música!")
           );
         }
+        return;
+      }
+    }
+    if (!queue) {
+      interaction.editReply(
+        res.danger("⚠️ Não há uma fila de reprodução ativa!")
+      );
+      return;
+    }
+    switch (options.getSubcommand(true)) {
+      case "pausar": {
+        if (queue.node.isPaused()) {
+          interaction.editReply(
+            res.danger("⚠️ A música atual já está pausada!")
+          );
+          return;
+        }
+        queue.node.pause();
+        interaction.editReply(res.success("⏸ Pausado"));
+        return;
+      }
+      case "retomar": {
+        if (!queue.node.isPaused()) {
+          interaction.editReply(
+            res.danger("⚠️ A música atual não está pausada!")
+          );
+          return;
+        }
+        queue.node.resume();
+        interaction.editReply(res.success("▶️ Retomado"));
+        return;
+      }
+      case "parar": {
+        queue.node.stop();
+        interaction.editReply(res.success("⏹ Parado"));
         return;
       }
     }
