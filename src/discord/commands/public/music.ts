@@ -147,7 +147,7 @@ new Command({
           return;
         }
         queue.node.pause();
-        interaction.editReply(res.success("⏸ Pausado"));
+        interaction.editReply(res.success("⏸️ Pausado"));
         return;
       }
       case "retomar": {
@@ -158,12 +158,12 @@ new Command({
           return;
         }
         queue.node.resume();
-        interaction.editReply(res.success("▶️ Retomado"));
+        interaction.editReply(res.success("▶️Retomado"));
         return;
       }
       case "parar": {
         queue.node.stop();
-        interaction.editReply(res.success("⏹ Parado"));
+        interaction.editReply(res.success("⏹️ Parado"));
         return;
       }
     }
