@@ -1,9 +1,9 @@
 import { Command } from "#base";
 import {settings} from "#settings";
-import { createQueueMetadata, icon, res } from "#functions";
-import { brBuilder, createEmbed, limitText } from "@magicyan/discord";
+import { createQueueMetadata, icon, /* res */ } from "#functions";
+import { brBuilder, createEmbed, /* limitText */ } from "@magicyan/discord";
 import { multimenu } from "@magicyan/discord-ui";
-import { QueryType, SearchQueryType, useMainPlayer } from "discord-player";
+import { Player, QueryType, SearchQueryType, useMainPlayer } from "discord-player";
 import {
   ApplicationCommandType,
   ApplicationCommandOptionType,
@@ -144,7 +144,7 @@ new Command({
       guild,
       voiceChannel,
     });
-    const player = useMainPlayer();
+    const player = useMainPlayer() as Player;
     const queue = player?.queues.cache.get(guild.id);
 
     await interaction.deferReply({ ephemeral: true });
@@ -155,7 +155,7 @@ new Command({
         const searchEngine = options.getString("engine") ?? QueryType.YOUTUBE;
 
         try {
-          const { track, searchResult } = await player?.play(
+          const { track, searchResult } = await player.play(
             voiceChannel as never,
             query,
             {
@@ -182,10 +182,10 @@ new Command({
               } ${track?.toString()}`
             );
           }
-          interaction.editReply(res.success(brBuilder(display).toString()));
+          interaction.editReply((brBuilder(display).toString()));
         } catch (_) {
           interaction.editReply(
-            res.danger("⚠️ Não foi possível tocar a música!")
+            ("⚠️ Não foi possível tocar a música!")
           );
         }
         return;
@@ -222,7 +222,7 @@ new Command({
 
     if (!queue) {
       interaction.editReply(
-        res.danger("⚠️ Não há uma fila de reprodução ativa!")
+        ("⚠️ Não há uma fila de reprodução ativa!")
       );
       return;
     }
@@ -231,28 +231,28 @@ new Command({
       case "pausar": {
         if (queue.node.isPaused()) {
           interaction.editReply(
-            res.danger("⚠️ A música atual já está pausada!")
+            ("⚠️ A música atual já está pausada!")
           );
           return;
         }
         queue.node.pause();
-        interaction.editReply(res.success("⏸️ Pausado"));
+        interaction.editReply(("⏸️ Pausado"));
         return;
       }
       case "retomar": {
         if (!queue.node.isPaused()) {
           interaction.editReply(
-            res.danger("⚠️ A música atual não está pausada!")
+            ("⚠️ A música atual não está pausada!")
           );
           return;
         }
         queue.node.resume();
-        interaction.editReply(res.success("▶️ Retomado"));
+        interaction.editReply(("▶️ Retomado"));
         return;
       }
       case "parar": {
         queue.node.stop();
-        interaction.editReply(res.success("⏹️ Parado"));
+        interaction.editReply(("⏹️ Parado"));
         return;
       }
       case "pular": {
@@ -261,7 +261,7 @@ new Command({
         for (let i = 0; i < skipAmount; i++) {
           queue.node.skip();
         }
-        interaction.editReply(res.success(`⏭️ Puladas ${skipAmount} músicas`));
+        interaction.editReply((`⏭️ Puladas ${skipAmount} músicas`));
         return;
       }
       case "fila": {
