@@ -8,7 +8,7 @@ const player = useMainPlayer();
 player?.events.on("playerStart", (queue, track) => {
   const { client, channel, voiceChannel } = getQueueMetadata(queue);
 
-  setSongStatus(client, track);
+  // setSongStatus(client, track);
 
   const embed = createEmbed({
     color: settings.colors.fuchsia,
