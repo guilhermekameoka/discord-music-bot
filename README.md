@@ -19,6 +19,7 @@
 - Go back to Discord Developer webpage > ***Bot*** > ***Privileged Gateways Intents*** and allow all 3 intents
 - Go to OAuth2 section and select the following scopes: **[bot]** and **[administrator]**
 - Use the generated URL link to invite the bot to your discord server
+- Run **`npm install`** to install all dependecies
 - Run **`npm run build`** to build the project
 - Run **`npm run start`** to start the application locally
 
