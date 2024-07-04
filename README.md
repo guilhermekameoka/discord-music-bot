@@ -1,8 +1,7 @@
-# Awesome Bot Base
+# Discord music bot
 
-* This project can be generated using the [Constant CLI](https://github.com/rinckodev/constatic)
-
-This is the most complete discord bot base you've ever seen! Developed by [@rinckodev](https://github.com/rinckodev), this project uses typescript in an incredible way to provide complete structures and facilitate the development of your discord bot.
+* The base of this project can be generated using the [Constant CLI](https://github.com/rinckodev/constatic) by [@rinckodev](https://github.com/rinckodev)
+  
 
 > ⚠️ [NodeJs](https://nodejs.org/en) version required: 20.12 or higher 
 
@@ -13,6 +12,19 @@ This is the most complete discord bot base you've ever seen! Developed by [@rinc
 - `watch`: running in watch mode
 - `start`: running the compiled bot
 
+## How to use
+- Firstly, you will need to create an application at [Discord Developer Portal](https://discord.com/developers/applications)
+- Go to the Bot section and click on reset Token. It will generate a token, copy that token
+- Go to the project root folder and create a .env file and add **BOT_TOKEN** = "***paste_your_token_here***"
+- Go back to Discord Developer webpage > ***Bot*** > ***Privileged Gateways Intents*** and allow all 3 intents
+- Go to OAuth2 section and select the following scopes: **[bot]** and **[administrator]**
+- Use the generated URL link to invite the bot to your discord server
+- Run **`npm run build`** to build the project
+- Run **`npm run start`** to start the application locally
+
+## Commands
+- **/musica** [tocar] [pausar] [parar] [retomar] [pular]
+  
 ## Structures
 
 - [Commands](#commands)
