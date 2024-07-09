@@ -17,17 +17,17 @@ new Command({
   options: [
     {
       name: "tocar",
-      description: "tocar música",
+      description: "Tocar música",
       type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "busca",
-          description: "nome da música ou URL",
+          description: "Nome da música ou URL",
           type: ApplicationCommandOptionType.String,
         },
         {
           name: "engine",
-          description: "engine de busca",
+          description: "Engine de busca",
           type: ApplicationCommandOptionType.String,
           choices: Object.values(QueryType).map((type) => ({
             name: type,
@@ -169,7 +169,7 @@ new Command({
           if (searchResult.playlist) {
             const { tracks, title, url } = searchResult.playlist;
             display.push(
-              `🎵 Adicionadas ${tracks.length} da playlist [${title}](${url})`
+              `${icon(":a:dj")} Adicionadas ${tracks.length} da playlist [${title}](${url})`
             );
             display.push(
               ...tracks.map((track) => `${track.title}`).slice(0, 8)
