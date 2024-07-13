@@ -2,6 +2,7 @@ import { getQueueMetadata/* , setSongStatus */ } from "#functions";
 import { brBuilder, createEmbed } from "@magicyan/discord";
 import { useMainPlayer } from "discord-player";
 import { settings } from "#settings";
+import { icon } from "#functions";
 
 const player = useMainPlayer();
 
@@ -12,7 +13,7 @@ player?.events.on("playerStart", (queue, track) => {
 
   const embed = createEmbed({
     color: settings.colors.fuchsia,
-    title: "🎵 Tocando agora",
+    title: `${icon(":a:dj")} Tocando agora`,
     thumbnail: track.thumbnail,
     url: track.url,
     description: brBuilder(
