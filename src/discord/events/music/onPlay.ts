@@ -6,7 +6,7 @@ import { icon } from "#functions";
 
 const player = useMainPlayer();
 
-player?.events.on("playerStart", (queue, track) => {
+player.events.on("playerStart", (queue, track) => {
   const { /* client, */ channel, voiceChannel } = getQueueMetadata(queue);
 
   //setSongStatus(client, track);

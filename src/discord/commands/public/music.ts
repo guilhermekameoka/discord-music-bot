@@ -145,7 +145,7 @@ new Command({
       voiceChannel,
     });
     const player = useMainPlayer() as Player;
-    const queue = player?.queues.cache.get(guild.id);
+    const queue = player.queues.cache.get(guild.id);
 
     await interaction.deferReply({ ephemeral: true });
 
@@ -198,7 +198,7 @@ new Command({
         ) as SearchQueryType;
 
         try {
-          const { track } = await player?.play(
+          const { track } = await player.play(
             voiceChannel as never,
             trackUrl,
             {
