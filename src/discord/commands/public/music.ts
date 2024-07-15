@@ -7,7 +7,7 @@ import { QueryType, SearchQueryType, useMainPlayer } from "discord-player";
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord.js";
 
 new Command({
-  name: "música",
+  name: "musica",
   description: "Comando de música",
   dmPermission: false,
   type: ApplicationCommandType.ChatInput,
@@ -102,7 +102,7 @@ new Command({
       type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
-          name: "música",
+          name: "musica",
           description: "Selecione a música",
           type: ApplicationCommandOptionType.String,
           required,
