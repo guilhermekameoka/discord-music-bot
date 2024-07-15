@@ -1,29 +1,27 @@
 import { Command } from "#base";
-import {settings} from "#settings";
-import { createQueueMetadata, icon, /* res */ } from "#functions";
-import { brBuilder, createEmbed, /* limitText */ } from "@magicyan/discord";
+import { createQueueMetadata, icon, res } from "#functions";
+import { settings } from "#settings";
+import { brBuilder, createEmbed, limitText } from "@magicyan/discord";
 import { multimenu } from "@magicyan/discord-ui";
-import { Player, QueryType, SearchQueryType, useMainPlayer } from "discord-player";
-import {
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
-} from "discord.js";
+import { QueryType, SearchQueryType, useMainPlayer } from "discord-player";
+import { ApplicationCommandOptionType, ApplicationCommandType } from "discord.js";
 
 new Command({
-  name: "musica",
-  description: "comando de música",
+  name: "música",
+  description: "Comando de música",
   dmPermission: false,
   type: ApplicationCommandType.ChatInput,
   options: [
     {
       name: "tocar",
-      description: "Tocar música",
+      description: "Tocar uma música",
       type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "busca",
-          description: "Nome da música ou URL",
+          description: "Nome da música ou url",
           type: ApplicationCommandOptionType.String,
+          required,
         },
         {
           name: "engine",
@@ -58,96 +56,119 @@ new Command({
       options: [
         {
           name: "quantidade",
-          description: "Quantidade de músicas para parar",
+          description: "Quantide de músicas para pular",
           type: ApplicationCommandOptionType.Integer,
           minValue: 1,
         },
       ],
     },
     {
+      name: "pesquisar",
+      description: "Pesquisar uma música",
+      type: ApplicationCommandOptionType.Subcommand,
+      options: [
+        {
+          name: "engine",
+          description: "Engine de busca",
+          type: ApplicationCommandOptionType.String,
+          choices: Object.values(QueryType).map((type) => ({
+            name: type,
+            value: type,
+          })),
+          required,
+        },
+        {
+          name: "busca",
+          description: "Nome da música ou url",
+          type: ApplicationCommandOptionType.String,
+          required,
+          autocomplete: true,
+        },
+      ],
+    },
+    {
       name: "fila",
-      description: "Mostra a fila de reprodução",
+      description: "Exibe a fila atual",
       type: ApplicationCommandOptionType.Subcommand,
     },
-    // {
-    //   name: "pesquisar",
-    //   description: "Pesquisar uma música",
-    //   type: ApplicationCommandOptionType.Subcommand,
-    //   options: [
-    //     {
-    //       name: "engine",
-    //       description: "engine de busca",
-    //       type: ApplicationCommandOptionType.String,
-    //       choices: Object.values(QueryType).map((type) => ({
-    //         name: type,
-    //         value: type,
-    //       })),
-    //       required: true,
-    //     },
-    //     {
-    //       name: "busca",
-    //       description: "nome da música ou URL",
-    //       type: ApplicationCommandOptionType.String,
-    //       required: true,
-    //       autocomplete: true,
-    //     },
-    //   ],
-    //   async autocomplete(interaction) {
-    //     const { options, /* guild */ } = interaction;
-    //     const player = useMainPlayer();
-    //     // const queue = player?.queues.cache.get(guild.id);
-
-    //     switch (options.getSubcommand(true)) {
-    //       case "pesquisar": {
-    //         const searchEngine = options.getString("engine", true);
-    //         const focused = options.getFocused?.();
-
-    //         try {
-    //           const results = await player.search(focused, {
-    //             searchEngine: searchEngine as SearchQueryType,
-    //           });
-    //           if (!results.hasTracks()) return;
-    //           interaction.respond(
-    //             results.tracks.map((track) => ({
-    //               name: limitText(`${track.duration} - ${track.title}`, 100),
-    //               value: track.url,
-    //             }))
-    //           );
-    //         } catch (_) {
-    //           // Handle error
-    //         }
-    //       }
-    //     }
-    //   },
-    // },
+    {
+      name: "embaralhar",
+      description: "Embaralha a ordem das músicas na fila",
+      type: ApplicationCommandOptionType.Subcommand,
+    },
+    {
+      name: "selecionar",
+      description: "Pular para uma música específica na fila",
+      type: ApplicationCommandOptionType.Subcommand,
+      options: [
+        {
+          name: "música",
+          description: "Selecione a música",
+          type: ApplicationCommandOptionType.String,
+          required,
+          autocomplete: true,
+        },
+      ],
+    },
   ],
+  async autocomplete(interaction) {
+    const { options, guild } = interaction;
+
+    const player = useMainPlayer();
+    const queue = player.queues.cache.get(guild.id);
+
+    switch (options.getSubcommand(true)) {
+      case "pesquisar": {
+        const searchEngine = options.getString("engine", true);
+        const focused = options.getFocused();
+
+        try {
+          const results = await player.search(focused, {
+            searchEngine: searchEngine as SearchQueryType,
+          });
+          if (!results.hasTracks()) return;
+
+          interaction.respond(
+            results.tracks
+              .map((track) => ({
+                name: limitText(`${track.duration} - ${track.title}`, 100),
+                value: track.url,
+              }))
+              .slice(0, 25)
+          );
+        } catch (_) {}
+        return;
+      }
+      case "selecionar": {
+        if (!queue || queue.size < 1) return;
+
+        const choices = queue.tracks.map((track, index) => ({
+          name: limitText(`${index}) ${track.title}`, 100),
+          value: track.id,
+        }));
+        interaction.respond(choices.slice(0, 25));
+        return;
+      }
+    }
+  },
   async run(interaction) {
     const { options, member, guild, channel, client } = interaction;
 
     const voiceChannel = member.voice.channel;
     if (!voiceChannel) {
-      interaction.reply(
-        "⚠️ Você precisa estar em um canal de voz para usar este comando!"
-      );
+      interaction.reply(res.danger(`${icon("danger")} Você precisa estar em um canal de voz para usar este comando!`));
       return;
     }
     if (!channel) {
-      interaction.reply(
-        "⚠️ Não foi possível utilizar este comando neste canal de texto!"
-      );
+      interaction.reply(res.danger(`${icon("danger")} Não possível utilizar este comando neste canal de texto!`));
       return;
     }
 
-    const metadata = createQueueMetadata({
-      channel,
-      client,
-      guild,
-      voiceChannel,
-    });
-    const player = useMainPlayer() as Player;
+    const metadata = createQueueMetadata({ channel, client, guild, voiceChannel });
+    const player = useMainPlayer();
     const queue = player.queues.cache.get(guild.id);
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral });
 
     switch (options.getSubcommand(true)) {
       case "tocar": {
@@ -155,104 +176,75 @@ new Command({
         const searchEngine = options.getString("engine") ?? QueryType.YOUTUBE;
 
         try {
-          const { track, searchResult } = await player.play(
-            voiceChannel as never,
-            query,
-            {
-              searchEngine: searchEngine as SearchQueryType,
-              nodeOptions: { metadata },
-            }
-          );
+          const { track, searchResult } = await player.play(voiceChannel as never, query, {
+            searchEngine: searchEngine as SearchQueryType,
+            nodeOptions: { metadata },
+          });
 
           const display: string[] = [];
 
           if (searchResult.playlist) {
             const { tracks, title, url } = searchResult.playlist;
             display.push(
-              `${icon(":a:dj")} Adicionadas ${tracks.length} da playlist [${title}](${url})`
+              `${icon("success")} Adicionadas ${tracks.length} da playlist [${title}](${url})`,
+              ...tracks.map((track) => `${track.title}`).slice(0, 8),
+              "..."
             );
-            display.push(
-              ...tracks.map((track) => `${track.title}`).slice(0, 8)
-            );
-            display.push("...");
           } else {
-            display.push(
-              `${icon(":a:dj")} ${
-                queue?.size ? "Adicionado à fila" : "Tocando agora"
-              } ${track?.toString()}`
-            );
+            display.push(`${icon("success")} ${queue?.size ? "Adicionado à fila" : "Tocando agora"} ${track.title}`);
           }
-          interaction.editReply((brBuilder(display).toString()));
+          interaction.editReply(res.success(brBuilder(display)));
         } catch (_) {
-          interaction.editReply(
-            ("⚠️ Não foi possível tocar a música!")
-          );
+          interaction.editReply(res.danger(`${icon("danger")} Não foi possível tocar a música`));
         }
         return;
       }
-      /* case "pesquisar": {
+      case "pesquisar": {
         const trackUrl = options.getString("busca", true);
-        const searchEngine = options.getString(
-          "engine",
-          true
-        ) as SearchQueryType;
+        const searchEngine = options.getString("engine", true) as SearchQueryType;
 
         try {
-          const { track } = await player.play(
-            voiceChannel as never,
-            trackUrl,
-            {
-              searchEngine,
-              nodeOptions: { metadata },
-            }
-          );
+          const { track } = await player.play(voiceChannel as never, trackUrl, {
+            searchEngine,
+            nodeOptions: { metadata },
+          });
 
           const text = queue?.size ? "Adicionado à fila" : "Tocando agora";
-          interaction.editReply(
-            res.success(`${icon(":a:dj")} ${text} ${track?.toString()}`)
-          );
+          interaction.editReply(res.success(`${icon("success")} ${text} ${track.title}`));
         } catch (_) {
-          interaction.editReply(
-            res.danger("⚠️ Não foi possível tocar a música!")
-          );
+          interaction.editReply(res.danger(`${icon("danger")} Não foi possível tocar a música`));
         }
         return;
-      } */
+      }
     }
 
     if (!queue) {
-      interaction.editReply(
-        ("⚠️ Não há uma fila de reprodução ativa!")
-      );
+      interaction.editReply(res.danger(`${icon("danger")} Não há uma fila de reprodução ativa!`));
       return;
     }
 
     switch (options.getSubcommand(true)) {
       case "pausar": {
         if (queue.node.isPaused()) {
-          interaction.editReply(
-            ("⚠️ A música atual já está pausada!")
-          );
+          interaction.editReply(res.danger(`${icon("danger")} A música atual já está pausada!`));
           return;
         }
         queue.node.pause();
-        interaction.editReply(("⏸️ Pausado"));
+        interaction.editReply(res.success(`${icon("success")} A música atual foi pausada!`));
         return;
       }
       case "retomar": {
         if (!queue.node.isPaused()) {
-          interaction.editReply(
-            ("⚠️ A música atual não está pausada!")
-          );
+          interaction.editReply(res.danger(`${icon("danger")} A música atual não está pausada!`));
           return;
         }
         queue.node.resume();
-        interaction.editReply(("▶️ Retomado"));
+        interaction.editReply(res.success(`${icon("success")} A música atual foi retomada!`));
         return;
       }
       case "parar": {
         queue.node.stop();
-        interaction.editReply(("⏹️ Parado"));
+        interaction.editReply(res.success(`${icon("success")} A música atual foi parada!`));
         return;
       }
       case "pular": {
@@ -261,7 +253,7 @@ new Command({
         for (let i = 0; i < skipAmount; i++) {
           queue.node.skip();
         }
-        interaction.editReply((`⏭️ Puladas ${skipAmount} músicas`));
+        interaction.editReply(res.success(`${icon("success")} Músicas puladas com sucesso!`));
         return;
       }
       case "fila": {
@@ -269,7 +261,7 @@ new Command({
           embed: createEmbed({
             color: settings.colors.fuchsia,
             description: brBuilder(
-              "#Fila atual",
+              "# Fila atual",
               `Músicas: ${queue.tracks.size}`,
               "",
               `Música atual: ${queue.currentTrack?.title ?? "Nenhuma"}`
@@ -284,9 +276,28 @@ new Command({
             ),
             thumbnail: track.thumbnail,
           })),
-          render: (embeds, components) =>
-            interaction.editReply({ embeds, components }),
+          render: (embeds, components) => interaction.editReply({ embeds, components }),
         });
+        return;
+      }
+      case "embaralhar": {
+        queue.tracks.shuffle();
+        interaction.editReply(res.success(`${icon("success")} A fila foi embaralhada!`));
+        return;
+      }
+      case "selecionar": {
+        const trackId = options.getString("música", true);
+
+        try {
+          const skipped = queue.node.skipTo(trackId);
+          interaction.editReply(
+            skipped
+              ? res.success(`${icon("success")} Músicas puladas com sucesso!`)
+              : res.danger(`${icon("danger")} Nenhum música foi pulada!`)
+          );
+        } catch (_) {
+          interaction.editReply(res.danger(`${icon("danger")} Não foi possível pular para a música selecionada`));
+        }
         return;
       }
     }
