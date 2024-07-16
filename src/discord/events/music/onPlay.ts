@@ -1,4 +1,4 @@
-import { getQueueMetadata, setSongStatus } from "#functions";
+import { getQueueMetadata, /* setSongStatus */ } from "#functions";
 import { settings } from "#settings";
 import { brBuilder, createEmbed } from "@magicyan/discord";
 import { useMainPlayer, Player } from "discord-player";
@@ -6,9 +6,9 @@ import { useMainPlayer, Player } from "discord-player";
 const player = useMainPlayer() as Player;
 
 player.events.on("playerStart", (queue, track) => {
-    const { client, channel, voiceChannel } = getQueueMetadata(queue);
+    const { /* client, */ channel, voiceChannel } = getQueueMetadata(queue);
 
-    setSongStatus(client, track);
+    // setSongStatus(client, track);
 
     const embed = createEmbed({
         color: settings.colors.fuchsia,
