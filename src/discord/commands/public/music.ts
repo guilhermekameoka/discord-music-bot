@@ -156,15 +156,26 @@ new Command({
 
     const voiceChannel = member.voice.channel;
     if (!voiceChannel) {
-      interaction.reply(res.danger(`${icon("danger")} Você precisa estar em um canal de voz para usar este comando!`));
+      interaction.reply(
+        res.danger(
+          `${icon("danger")} Você precisa estar em um canal de voz para usar este comando!`
+        )
+      );
       return;
     }
     if (!channel) {
-      interaction.reply(res.danger(`${icon("danger")} Não possível utilizar este comando neste canal de texto!`));
+      interaction.reply(
+        res.danger(`${icon("danger")} Não possível utilizar este comando neste canal de texto!`)
+      );
       return;
     }
 
-    const metadata = createQueueMetadata({ channel, client, guild, voiceChannel });
+    const metadata = createQueueMetadata({
+      channel,
+      client,
+      guild,
+      voiceChannel,
+    });
     const player = useMainPlayer();
     const queue = player.queues.cache.get(guild.id);
 
@@ -191,7 +202,11 @@ new Command({
               "..."
             );
           } else {
-            display.push(`${icon("success")} ${queue?.size ? "Adicionado à fila" : "Tocando agora"} ${track.title}`);
+            display.push(
+              `${icon("success")} ${queue?.size ? "Adicionado à fila" : "Tocando agora"} ${
+                track.title
+              }`
+            );
           }
           interaction.editReply(res.success(brBuilder(display)));
         } catch (_) {
@@ -296,7 +311,9 @@ new Command({
               : res.danger(`${icon("danger")} Nenhum música foi pulada!`)
           );
         } catch (_) {
-          interaction.editReply(res.danger(`${icon("danger")} Não foi possível pular para a música selecionada`));
+          interaction.editReply(
+            res.danger(`${icon("danger")} Não foi possível pular para a música selecionada`)
+          );
         }
         return;
       }
