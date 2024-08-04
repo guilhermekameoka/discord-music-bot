@@ -8,6 +8,7 @@
 /.env
 /.env.development
 /package-lock.json
+.env.example
 
 # Config files
 /firebase.json
