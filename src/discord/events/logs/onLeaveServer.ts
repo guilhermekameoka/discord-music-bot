@@ -4,13 +4,13 @@ import { hexToRgb } from "#functions";
 import { settings } from "#settings";
 import { EmbedBuilder, TextChannel, time, GuildMember } from "discord.js";
 
-const channelId = "1252440973074497587";
+const channelId = process.env.CHANNEL_ID;
 
 export default new Event({
     event: "guildMemberRemove",
     name: "guildMemberRemove",
     run(member: GuildMember) {
-        const channel = member.guild.channels.cache.get(channelId) as TextChannel;
+        const channel = channelId ? member.guild.channels.cache.get(channelId) as TextChannel : undefined;
         
         if (!channel) {
             console.error(`Não foi possível achar o canal com ID ${channelId}`);
