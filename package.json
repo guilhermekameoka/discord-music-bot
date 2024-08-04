@@ -19,14 +19,14 @@
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
     "discord-player": "^6.7.1",
-    "discord-player-youtubei": "^1.2.3",
+    "discord-player-youtubei": "^1.2.4",
     "discord.js": "^14.15.3",
     "fast-glob": "^3.3.2",
     "mediaplex": "^0.0.9",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.14.13",
+    "@types/node": "^20.14.14",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
