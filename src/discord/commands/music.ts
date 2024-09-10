@@ -184,7 +184,7 @@ new Command({
     switch (options.getSubcommand(true)) {
       case "tocar": {
         const query = options.getString("busca", true);
-        const searchEngine = options.getString("engine") ?? QueryType.AUTO;
+        const searchEngine = options.getString("engine") ?? QueryType.SPOTIFY_SEARCH;
 
         try {
           const { track, searchResult } = await player.play(voiceChannel as never, query, {
