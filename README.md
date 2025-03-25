@@ -1,7 +1,6 @@
 # Discord Music Bot
 
 > [!WARNING]
-
 > [NodeJs](https://nodejs.org/en) version required: 20.12 or higher
 
 ## Instructions
